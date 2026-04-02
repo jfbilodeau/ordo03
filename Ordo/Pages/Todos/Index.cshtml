@@ -1,0 +1,73 @@
+@page
+@model Ordo.Pages.Todos.IndexModel
+@{
+    ViewData["Title"] = "Todos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">Todos</h1>
+    <a asp-page="/Todos/Create" class="btn btn-primary">New Todo</a>
+</div>
+
+@if (!Model.Todos.Any())
+{
+    <div class="alert alert-info" role="alert">
+        No todos yet. Create one to get started.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var todo in Model.Todos)
+            {
+                <tr>
+                    <td>
+                        @if (todo.IsCompleted)
+                        {
+                            <span class="text-decoration-line-through text-body-secondary">@todo.Name</span>
+                        }
+                        else
+                        {
+                            <span>@todo.Name</span>
+                        }
+                    </td>
+                    <td>@(todo.DueDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    <td>
+                        @if (todo.IsCompleted)
+                        {
+                            <span class="badge text-bg-success">Completed</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-warning">Pending</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-page="/Todos/Edit" asp-route-id="@todo.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form method="post" asp-page-handler="ToggleComplete" asp-route-id="@todo.Id">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    @(todo.IsCompleted ? "Mark Pending" : "Mark Complete")
+                                </button>
+                            </form>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@todo.Id" onsubmit="return confirm('Delete this todo?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

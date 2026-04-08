@@ -117,6 +117,10 @@ jobs:
 
   deploy-application:
     runs-on: ubuntu-latest
+    needs:
+      - build-and-package 
+      - apply-bicep-template
+      
     steps:
       - name: Azure Login
         run: sleep 7 && echo "Step $GITHUB_STEP_SUMMARY"
